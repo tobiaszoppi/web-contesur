@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://contesursa.com.ar/sitemap.xml

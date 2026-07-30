@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-16660048232"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'AW-16660048232');
+    </script>
+    <!-- Event snippet for Contesur - Click WhatsApp conversion page -->
+    <script>
+    function gtag_report_conversion_whatsapp(url) {
+      var callback = function () {
+        if (typeof(url) != 'undefined') {
+          if (!url.includes('wa.me') && !url.includes('whatsapp')) {
+            window.location = url;
+          }
+        }
+      };
+      gtag('event', 'conversion', {
+          'send_to': 'AW-16660048232/fmhyCLqW9cAcEOjSkIg-',
+          'event_callback': callback
+      });
+      return true;
+    }
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Página no encontrada | Contesur</title>
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+  </head>
+  <body class="error-page">
+    <main class="error-shell">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">C</span>
+        <span>
+          <strong>Contesur</strong>
+          <small>Contenedores y volquetes</small>
+        </span>
+      </a>
+      <h1>Página no encontrada</h1>
+      <p>La dirección que intentaste abrir no existe o fue movida. Podés volver al inicio o consultar por WhatsApp.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="index.html">Volver al inicio</a>
+        <a class="btn btn-secondary" href="https://wa.me/5492916487992" target="_blank" rel="noopener" onclick="return gtag_report_conversion_whatsapp('https://wa.me/5492916487992');">WhatsApp</a>
+      </div>
+    </main>
+  </body>
+</html>
