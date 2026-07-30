@@ -17,6 +17,12 @@
 /index.html
   Cache-Control: public, max-age=300
 
+/volquete-express/
+  Cache-Control: public, max-age=300
+
+/volquete-express/index.html
+  Cache-Control: public, max-age=300
+
 /404.html
   Cache-Control: public, max-age=300
 
