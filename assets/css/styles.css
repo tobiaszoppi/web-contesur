@@ -1208,26 +1208,38 @@ details p {
   }
 
   body:not(.express-page) .site-header {
-    top: 56px;
+    top: 48px;
   }
 
   .promo-inner {
-    min-height: 56px;
-    gap: 8px;
-  }
-
-  .promo-inner {
-    align-items: flex-start;
-    flex-direction: column;
+    min-height: 48px;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
   }
 
   .promo-inner p,
   .promo-inner a {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
+  }
+
+  .promo-inner p {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .promo-inner span {
+    display: none;
+  }
+
+  .promo-inner a {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   .nav-menu {
-    top: 124px;
+    top: 116px;
   }
 
   .express-page .nav-menu-static {
