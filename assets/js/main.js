@@ -1,3 +1,4 @@
+(() => {
 const body = document.body;
 const header = document.querySelector("[data-header]");
 const navToggle = document.querySelector("[data-nav-toggle]");
@@ -24,6 +25,10 @@ const campaignKeys = [
   "utm_term",
   "utm_content",
 ];
+const googleAdsConversions = {
+  click_phone_express: "AW-16660048232/qrq3CKz9tNscEOjSkIg-",
+  click_whatsapp_express: "AW-16660048232/K7XJCLDFtNscEOjSkIg-",
+};
 const googleAdsNote = "Vi el anuncio en Google.";
 
 if (year) {
@@ -125,6 +130,24 @@ const sendTrackingEvent = (eventName, callback) => {
   }
 };
 
+const sendConversionEvent = (eventName, callback) => {
+  const sendTo = googleAdsConversions[eventName];
+  if (typeof window.gtag !== "function" || !sendTo) {
+    return false;
+  }
+
+  try {
+    window.gtag("event", "conversion", {
+      send_to: sendTo,
+      event_callback: callback,
+      event_timeout: 500,
+    });
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 const navigateAfterTracking = (href, eventName) => {
   let navigated = false;
   const navigate = () => {
@@ -132,6 +155,12 @@ const navigateAfterTracking = (href, eventName) => {
     navigated = true;
     window.location.href = href;
   };
+  const conversionSendStarted = sendConversionEvent(eventName, navigate);
+
+  if (conversionSendStarted) {
+    window.setTimeout(navigate, 550);
+    return;
+  }
 
   if (sendTrackingEvent(eventName, navigate)) {
     window.setTimeout(navigate, 550);
@@ -156,14 +185,19 @@ trackedLinks.forEach((link) => {
 
     if (shouldDelayNavigation) {
       event.preventDefault();
+      if (googleAdsConversions[eventName]) {
+        sendTrackingEvent(eventName);
+      }
       navigateAfterTracking(href, eventName);
       return;
     }
 
     sendTrackingEvent(eventName);
+    sendConversionEvent(eventName);
   });
 });
 
 if (document.body.classList.contains("express-page")) {
   sendTrackingEvent("view_express");
 }
+})();
