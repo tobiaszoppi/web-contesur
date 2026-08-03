@@ -5,6 +5,26 @@ const navMenu = document.querySelector("[data-nav-menu]");
 const year = document.querySelector("[data-year]");
 const trackedLinks = document.querySelectorAll("[data-track-event]");
 const expressLinks = document.querySelectorAll('a[href="volquete-express/"]');
+const adsClickEvents = new Set([
+  "click_whatsapp_express",
+  "click_phone_express",
+  "click_whatsapp_home",
+  "click_phone_home",
+  "click_whatsapp_404",
+]);
+const campaignKeys = [
+  "gclid",
+  "gbraid",
+  "wbraid",
+  "gad_source",
+  "gad_campaignid",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+];
+const googleAdsNote = "Vi el anuncio en Google.";
 
 if (year) {
   year.textContent = new Date().getFullYear();
@@ -41,7 +61,7 @@ const preserveCampaignParams = (link) => {
   const campaignParams = new URLSearchParams();
 
   currentParams.forEach((value, key) => {
-    if (key.startsWith("utm_") || key === "gclid" || key === "gbraid" || key === "wbraid") {
+    if (campaignKeys.includes(key)) {
       campaignParams.set(key, value);
     }
   });
@@ -55,14 +75,95 @@ const preserveCampaignParams = (link) => {
 
 expressLinks.forEach(preserveCampaignParams);
 
-const sendTrackingEvent = (eventName) => {
-  if (typeof window.gtag === "function" && eventName) {
-    window.gtag("event", eventName);
+const isPaidGoogleVisit = () => {
+  const params = new URLSearchParams(window.location.search);
+  const utmSource = params.get("utm_source") || "";
+  const utmMedium = params.get("utm_medium") || "";
+
+  return (
+    params.has("gclid") ||
+    params.has("gbraid") ||
+    params.has("wbraid") ||
+    params.has("gad_source") ||
+    (utmSource.toLowerCase() === "google" && utmMedium.toLowerCase() === "cpc")
+  );
+};
+
+const appendGoogleAdsNote = (link) => {
+  if (!isPaidGoogleVisit()) return;
+
+  const href = link.getAttribute("href") || "";
+  if (!href.includes("wa.me")) return;
+
+  const url = new URL(href, window.location.href);
+  const currentMessage = url.searchParams.get("text") || "";
+
+  if (currentMessage.includes(googleAdsNote)) return;
+
+  const trimmedMessage = currentMessage.trim();
+  const separator = trimmedMessage.endsWith(".") ? " " : ". ";
+  const message = trimmedMessage ? `${currentMessage}${separator}${googleAdsNote}` : googleAdsNote;
+  url.searchParams.set("text", message);
+  link.href = url.toString();
+};
+
+document.querySelectorAll('a[data-track-event][href*="wa.me"]').forEach(appendGoogleAdsNote);
+
+const sendTrackingEvent = (eventName, callback) => {
+  if (typeof window.gtag !== "function" || !eventName) {
+    return false;
+  }
+
+  try {
+    window.gtag("event", eventName, {
+      event_callback: callback,
+      event_timeout: 500,
+    });
+    return true;
+  } catch (error) {
+    return false;
   }
 };
 
+const navigateAfterTracking = (href, eventName) => {
+  let navigated = false;
+  const navigate = () => {
+    if (navigated) return;
+    navigated = true;
+    window.location.href = href;
+  };
+
+  if (sendTrackingEvent(eventName, navigate)) {
+    window.setTimeout(navigate, 550);
+    return;
+  }
+
+  navigate();
+};
+
 trackedLinks.forEach((link) => {
-  link.addEventListener("click", () => {
-    sendTrackingEvent(link.dataset.trackEvent);
+  if (link.dataset.trackingReady === "true") return;
+  link.dataset.trackingReady = "true";
+
+  link.addEventListener("click", (event) => {
+    if (event.defaultPrevented) return;
+
+    appendGoogleAdsNote(link);
+
+    const eventName = link.dataset.trackEvent;
+    const href = link.href;
+    const shouldDelayNavigation = adsClickEvents.has(eventName) && !link.target && href;
+
+    if (shouldDelayNavigation) {
+      event.preventDefault();
+      navigateAfterTracking(href, eventName);
+      return;
+    }
+
+    sendTrackingEvent(eventName);
   });
 });
+
+if (document.body.classList.contains("express-page")) {
+  sendTrackingEvent("view_express");
+}

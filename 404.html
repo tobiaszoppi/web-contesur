@@ -10,23 +10,6 @@
 
       gtag('config', 'AW-16660048232');
     </script>
-    <!-- Event snippet for Contesur - Click WhatsApp conversion page -->
-    <script>
-    function gtag_report_conversion_whatsapp(url) {
-      var callback = function () {
-        if (typeof(url) != 'undefined') {
-          if (!url.includes('wa.me') && !url.includes('whatsapp')) {
-            window.location = url;
-          }
-        }
-      };
-      gtag('event', 'conversion', {
-          'send_to': 'AW-16660048232/fmhyCLqW9cAcEOjSkIg-',
-          'event_callback': callback
-      });
-      return true;
-    }
-    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
@@ -51,8 +34,9 @@
       <p>La dirección que intentaste abrir no existe o fue movida. Podés volver al inicio o consultar por WhatsApp.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="index.html">Volver al inicio</a>
-        <a class="btn btn-secondary" href="https://wa.me/5492916487992" target="_blank" rel="noopener" onclick="return gtag_report_conversion_whatsapp('https://wa.me/5492916487992');">WhatsApp</a>
+        <a class="btn btn-secondary" href="https://wa.me/5492916487992" target="_blank" rel="noopener" data-track-event="click_whatsapp_404">WhatsApp</a>
       </div>
     </main>
+    <script src="assets/js/main.js?v=20260803-tracking" defer></script>
   </body>
 </html>
